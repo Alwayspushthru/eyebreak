@@ -48,7 +48,7 @@ struct StatsView: View {
                 }) {
                     HStack {
                         Image(systemName: "trash.fill")
-                        Text("Reset Statistics")
+                        Text(L10n.text("Reset Statistics"))
                             .fontWeight(.medium)
                     }
                     .foregroundColor(.red)
@@ -97,7 +97,7 @@ struct StatsView: View {
                         )
                 }
 
-                Text("Today's Statistics")
+                Text(L10n.text("Today's Statistics"))
                     .font(.title2)
                     .fontWeight(.bold)
 
@@ -108,7 +108,7 @@ struct StatsView: View {
             
             HStack(spacing: 20) {
                 EnhancedStatBox(
-                    title: "Breaks Taken",
+                    title: L10n.text("Breaks Taken"),
                     value: "\(todayStats.breaksCompleted)",
                     icon: "checkmark.seal.fill",
                     color: .green,
@@ -116,7 +116,7 @@ struct StatsView: View {
                 )
                 
                 EnhancedStatBox(
-                    title: "Breaks Skipped",
+                    title: L10n.text("Breaks Skipped"),
                     value: "\(todayStats.breaksSkipped)",
                     icon: "xmark.seal.fill",
                     color: .red,
@@ -124,7 +124,7 @@ struct StatsView: View {
                 )
                 
                 EnhancedStatBox(
-                    title: "Total Break Time",
+                    title: L10n.text("Total Break Time"),
                     value: formatDuration(todayStats.totalBreakTime),
                     icon: "clock.badge.fill",
                     color: .blue,
@@ -138,7 +138,7 @@ struct StatsView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "target")
                             .foregroundStyle(.blue)
-                        Text("Daily Goal Progress")
+                        Text(L10n.text("Daily Goal Progress"))
                             .font(.subheadline)
                             .fontWeight(.medium)
                     }
@@ -191,7 +191,7 @@ struct StatsView: View {
                             Image(systemName: "sparkles")
                                 .foregroundColor(.yellow)
                                 .font(.caption)
-                            Text("Goal Reached!")
+                            Text(L10n.text("Goal Reached!"))
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.green)
@@ -249,7 +249,7 @@ struct StatsView: View {
                         )
                 }
 
-                Text("Break History")
+                Text(L10n.text("Break History"))
                     .font(.title2)
                     .fontWeight(.bold)
 
@@ -257,7 +257,7 @@ struct StatsView: View {
 
                 Picker("", selection: $selectedTimeRange) {
                     ForEach(TimeRange.allCases, id: \.self) { range in
-                        Text(range.rawValue).tag(range)
+                        Text(L10n.text(range.rawValue)).tag(range)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -270,8 +270,8 @@ struct StatsView: View {
                 VStack(spacing: 12) {
                     // Legend
                     HStack(spacing: 16) {
-                        LegendItem(color: .green, secondaryColor: .mint, label: "Goal Met")
-                        LegendItem(color: .blue, secondaryColor: .cyan, label: "Below Goal")
+                        LegendItem(color: .green, secondaryColor: .mint, label: L10n.text("Goal Met"))
+                        LegendItem(color: .blue, secondaryColor: .cyan, label: L10n.text("Below Goal"))
                         Spacer()
                     }
                     .padding(.horizontal, 4)
@@ -297,7 +297,7 @@ struct StatsView: View {
                         )
                 )
             } else {
-                Text("Charts require macOS 13.0 or later")
+                Text(L10n.text("Charts require macOS 13.0 or later"))
                     .foregroundColor(.secondary)
                     .frame(height: 250)
                     .frame(maxWidth: .infinity)
@@ -313,8 +313,8 @@ struct StatsView: View {
 
         return Chart(data) { item in
             BarMark(
-                x: .value("Date", item.date, unit: .day),
-                y: .value("Breaks", item.breaks)
+                x: .value(L10n.text("Date"), item.date, unit: .day),
+                y: .value(L10n.text("Breaks"), item.breaks)
             )
             .foregroundStyle(
                 item.breaks >= settings.dailyBreakGoal ?
@@ -327,7 +327,8 @@ struct StatsView: View {
             AxisMarks(values: .stride(by: selectedTimeRange == .week ? .day : .day)) { value in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [4, 4]))
                     .foregroundStyle(Color.secondary.opacity(0.3))
-                AxisValueLabel(format: selectedTimeRange == .week ? .dateTime.day().month(.abbreviated) : .dateTime.day())
+                let day = Date.FormatStyle.dateTime.day().locale(AppLocalization.shared.locale)
+                AxisValueLabel(format: selectedTimeRange == .week ? day.month(.abbreviated) : day)
                     .font(.caption2)
                     .foregroundStyle(Color.secondary)
             }
@@ -374,7 +375,7 @@ struct StatsView: View {
                         )
                 }
 
-                Text("Insights")
+                Text(L10n.text("Insights"))
                     .font(.title2)
                     .fontWeight(.bold)
 
@@ -402,9 +403,9 @@ struct StatsView: View {
         let secs = seconds % 60
         
         if minutes > 0 {
-            return "\(minutes)m \(secs)s"
+            return L10n.format("%@m %@s", minutes, secs)
         } else {
-            return "\(secs)s"
+            return L10n.format("%@s", secs)
         }
     }
     
@@ -438,15 +439,15 @@ struct StatsView: View {
         if weeklyAverage >= settings.dailyBreakGoal {
             insights.append(Insight(
                 icon: "star.fill",
-                title: "Excellent Progress!",
-                description: "You're consistently meeting your daily break goal. Keep it up!",
+                title: L10n.text("Excellent Progress!"),
+                description: L10n.text("You're consistently meeting your daily break goal. Keep it up!"),
                 color: .green
             ))
         } else {
             insights.append(Insight(
                 icon: "chart.line.uptrend.xyaxis",
-                title: "Room for Improvement",
-                description: "Try to increase your break frequency to meet your daily goal.",
+                title: L10n.text("Room for Improvement"),
+                description: L10n.text("Try to increase your break frequency to meet your daily goal."),
                 color: .orange
             ))
         }
@@ -458,8 +459,8 @@ struct StatsView: View {
         if totalSkips > totalBreaks / 4 {
             insights.append(Insight(
                 icon: "exclamationmark.triangle.fill",
-                title: "High Skip Rate",
-                description: "You're skipping \(Int(Double(totalSkips) / Double(totalBreaks + totalSkips) * 100))% of breaks. Your eyes need rest!",
+                title: L10n.text("High Skip Rate"),
+                description: L10n.format("You're skipping %@%% of breaks. Your eyes need rest!", Int(Double(totalSkips) / Double(totalBreaks + totalSkips) * 100)),
                 color: .red
             ))
         }
@@ -469,8 +470,8 @@ struct StatsView: View {
         if currentStreak >= 3 {
             insights.append(Insight(
                 icon: "flame.fill",
-                title: "\(currentStreak) Day Streak!",
-                description: "You've taken breaks every day for \(currentStreak) days. Amazing!",
+                title: L10n.format("%@ Day Streak!", currentStreak),
+                description: L10n.format("You've taken breaks every day for %@ days. Amazing!", currentStreak),
                 color: .orange
             ))
         }
@@ -720,7 +721,7 @@ struct EnhancedStatBox: View {
             HStack(spacing: 4) {
                 Image(systemName: trend.icon)
                     .font(.caption2)
-                Text("Trend")
+                Text(L10n.text("Trend"))
                     .font(.caption2)
             }
             .foregroundColor(trend.color.opacity(0.8))

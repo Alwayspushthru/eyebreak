@@ -95,7 +95,7 @@ struct ThemeSettingsCard: View {
             }) {
                 HStack {
                     Image(systemName: "paintbrush.fill")
-                    Text(showingCustomEditor ? "Hide Customization" : "Customize Colors")
+                    Text(showingCustomEditor ? L10n.text("Hide Customization") : L10n.text("Customize Colors"))
                         .fontWeight(.medium)
                     Spacer()
                     Image(systemName: showingCustomEditor ? "chevron.up" : "chevron.down")
@@ -138,11 +138,11 @@ struct ThemePreviewCard: View {
             
             // Text preview
             VStack(alignment: .leading, spacing: 4) {
-                Text("Preview")
+                Text(L10n.text("Preview"))
                     .font(.headline)
                     .foregroundColor(theme.textColor.opacity(theme.textOpacity))
                 
-                Text("This is how it will look")
+                Text(L10n.text("This is how it will look"))
                     .font(.caption)
                     .foregroundColor(theme.secondaryTextColor.opacity(theme.secondaryTextOpacity))
             }
@@ -174,7 +174,7 @@ struct CustomThemeEditor: View {
         VStack(alignment: .leading, spacing: 20) {
             // Background Color
             ColorPickerRow(
-                title: "Background Color",
+                title: L10n.text("Background Color"),
                 color: Binding(
                     get: { theme.backgroundColor },
                     set: { newColor in
@@ -192,7 +192,7 @@ struct CustomThemeEditor: View {
             
             // Text Color
             ColorPickerRow(
-                title: "Text Color",
+                title: L10n.text("Text Color"),
                 color: Binding(
                     get: { theme.textColor },
                     set: { newColor in
@@ -210,7 +210,7 @@ struct CustomThemeEditor: View {
             
             // Secondary Text Color
             ColorPickerRow(
-                title: "Secondary Text",
+                title: L10n.text("Secondary Text"),
                 color: Binding(
                     get: { theme.secondaryTextColor },
                     set: { newColor in
@@ -228,7 +228,7 @@ struct CustomThemeEditor: View {
             
             // Accent Color
             ColorPickerRow(
-                title: "Accent Color",
+                title: L10n.text("Accent Color"),
                 color: Binding(
                     get: { theme.accentColor },
                     set: { newColor in
@@ -246,15 +246,15 @@ struct CustomThemeEditor: View {
             
             // Glass Effect Settings
             VStack(alignment: .leading, spacing: 12) {
-                Text("Glass Effect")
+                Text(L10n.text("Glass Effect"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
                 HStack {
-                    Text("Blur Radius")
+                    Text(L10n.text("Blur Radius"))
                         .frame(width: 120, alignment: .leading)
                     Slider(value: $theme.glassBlurRadius, in: 0...20) {
-                        Text("Blur")
+                        Text(L10n.text("Blur"))
                     } onEditingChanged: { _ in
                         onThemeChange()
                     }
@@ -264,10 +264,10 @@ struct CustomThemeEditor: View {
                 }
                 
                 HStack {
-                    Text("Highlight")
+                    Text(L10n.text("Highlight"))
                         .frame(width: 120, alignment: .leading)
                     Slider(value: $theme.glassHighlightOpacity, in: 0...1) {
-                        Text("Highlight")
+                        Text(L10n.text("Highlight"))
                     } onEditingChanged: { _ in
                         onThemeChange()
                     }
@@ -286,7 +286,7 @@ struct CustomThemeEditor: View {
                 }) {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
-                        Text("Reset to Default")
+                        Text(L10n.text("Reset to Default"))
                     }
                     .foregroundColor(.orange)
                 }
@@ -320,7 +320,7 @@ struct ColorPickerRow: View {
                 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text("Opacity")
+                        Text(L10n.text("Opacity"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Spacer()
@@ -330,7 +330,7 @@ struct ColorPickerRow: View {
                     }
                     
                     Slider(value: $opacity, in: 0...1) {
-                        Text("Opacity")
+                        Text(L10n.text("Opacity"))
                     } onEditingChanged: { _ in
                         onOpacityChange()
                     }
@@ -403,7 +403,7 @@ struct QuickPresetsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Quick Presets")
+            Text(L10n.text("Quick Presets"))
                 .font(.headline)
             
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))], spacing: 12) {
@@ -421,7 +421,7 @@ struct QuickPresetsView: View {
                                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                 )
                             
-                            Text(preset.name)
+                            Text(L10n.text(preset.name))
                                 .font(.caption)
                                 .foregroundColor(.primary)
                         }
@@ -456,7 +456,7 @@ struct ThemeTypeButton: View {
             VStack(spacing: 8) {
                 iconCircle
                 
-                Text(type.rawValue)
+                Text(L10n.text(type.rawValue))
                     .font(.caption)
                     .fontWeight(isSelected ? .semibold : .regular)
                     .foregroundColor(isSelected ? .blue : .secondary)

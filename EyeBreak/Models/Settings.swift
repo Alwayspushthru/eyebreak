@@ -152,6 +152,9 @@ class AppSettings: ObservableObject {
     func timeString(from hour: Double) -> String {
         let hours = Int(hour)
         let minutes = Int((hour - Double(hours)) * 60)
+        if AppLocalization.shared.language == .simplifiedChinese {
+            return String(format: "%02d:%02d", hours, minutes)
+        }
         let isPM = hours >= 12
         let displayHour = hours > 12 ? hours - 12 : (hours == 0 ? 12 : hours)
         let period = isPM ? "PM" : "AM"
@@ -160,9 +163,10 @@ class AppSettings: ObservableObject {
     
     /// Get day name from weekday number (1 = Sun, 2 = Mon, etc.)
     func dayName(for weekday: Int) -> String {
-        let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         guard weekday >= 1 && weekday <= 7 else { return "" }
-        return days[weekday - 1]
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = AppLocalization.shared.locale
+        return calendar.shortWeekdaySymbols[weekday - 1]
     }
     
     // MARK: - Color Theme Computed Properties

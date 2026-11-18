@@ -145,7 +145,7 @@ struct BreakOverlayView: View {
             }
             
             // Title with gradient
-            Text("Time for a Break")
+            Text(L10n.text("Time for a Break"))
                 .font(.system(size: 48, weight: .bold, design: .rounded))
                 .foregroundStyle(currentTheme.textGradient())
                 .shadow(color: currentTheme.accentColor.opacity(0.3), radius: 10)
@@ -159,7 +159,7 @@ struct BreakOverlayView: View {
                         .font(.title2)
                         .foregroundColor(currentTheme.accentColor)
                     
-                    Text("Look at something 20 feet away")
+                    Text(L10n.text("Look at something 20 feet away"))
                         .font(.system(size: 24, weight: .medium, design: .rounded))
                         .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity))
                 }
@@ -168,7 +168,7 @@ struct BreakOverlayView: View {
                     Image(systemName: "sparkles")
                         .font(.caption)
                         .foregroundColor(currentTheme.accentColor.opacity(0.8))
-                    Text("Give your eyes a rest")
+                    Text(L10n.text("Give your eyes a rest"))
                         .font(.callout)
                         .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity))
                     Image(systemName: "sparkles")
@@ -249,7 +249,7 @@ struct BreakOverlayView: View {
                     .shadow(color: currentTheme.accentColor.opacity(0.5), radius: 10)
                     .contentTransition(.numericText())
                 
-                Text("seconds")
+                Text(L10n.text("seconds"))
                     .font(.caption)
                     .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity))
                     .textCase(.uppercase)
@@ -274,11 +274,11 @@ struct BreakOverlayView: View {
     
     private var skipHint: some View {
         VStack(spacing: 12) {
-            Text("Press ESC or click anywhere to skip")
+            Text(L10n.text("Press ESC or click anywhere to skip"))
                 .font(.system(size: 14, design: .rounded))
                 .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.8))
             
-            Text("(Not recommended—your eyes need this!)")
+            Text(L10n.text("(Not recommended—your eyes need this!)"))
                 .font(.system(size: 12, design: .rounded))
                 .foregroundColor(currentTheme.secondaryTextColor.opacity(currentTheme.secondaryTextOpacity * 0.6))
         }
@@ -391,7 +391,7 @@ struct AnimatedEyeExerciseView: View {
     var body: some View {
         VStack(spacing: 40) {
             // Title
-            Text("Eye Exercise")
+            Text(L10n.text("Eye Exercise"))
                 .font(.system(size: 48, weight: .bold, design: .rounded))
                 .foregroundStyle(currentTheme.textGradient())
                 .shadow(color: Color.black.opacity(0.3), radius: 10)
@@ -438,13 +438,13 @@ struct AnimatedEyeExerciseView: View {
             
             // Direction instruction
             VStack(spacing: 12) {
-                Text(currentDirection.rawValue)
+                Text(L10n.text(currentDirection.rawValue))
                     .font(.system(size: 36, weight: .bold, design: .rounded))
                     .foregroundColor(currentDirection.color)
                     .shadow(color: Color.black.opacity(0.3), radius: 10)
                     .animation(.easeInOut(duration: 0.3), value: currentDirection)
                 
-                Text("Follow the moving dot with your eyes")
+                Text(L10n.text("Follow the moving dot with your eyes"))
                     .font(.system(size: 20, weight: .medium, design: .rounded))
                     .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity * 0.9))
             }
@@ -453,7 +453,7 @@ struct AnimatedEyeExerciseView: View {
             .cornerRadius(16)
             
             // Timer countdown
-            Text("Break ends in: \(remainingSeconds)s")
+            Text(L10n.format("Break ends in: %@s", remainingSeconds))
                 .font(.system(size: 24, weight: .semibold, design: .rounded))
                 .foregroundColor(currentTheme.textColor.opacity(currentTheme.textOpacity))
                 .padding(.horizontal, 24)

@@ -264,27 +264,27 @@ enum ReminderType: String {
     
     var message: String {
         switch self {
-        case .blink: return "Blink your eyes"
-        case .lookLeft: return "Look to the left"
-        case .lookRight: return "Look to the right"
-        case .lookUp: return "Look up"
-        case .lookDown: return "Look down"
-        case .lookAround: return "Look around"
+        case .blink: return L10n.text("Blink your eyes")
+        case .lookLeft: return L10n.text("Look to the left")
+        case .lookRight: return L10n.text("Look to the right")
+        case .lookUp: return L10n.text("Look up")
+        case .lookDown: return L10n.text("Look down")
+        case .lookAround: return L10n.text("Look around")
         case .custom:
             let message = AppSettings.shared.customReminderMessage
-            return message.isEmpty ? "Take care of your eyes" : message
+            return message.isEmpty ? L10n.text("Take care of your eyes") : message
         }
     }
     
     var subtitle: String {
         switch self {
-        case .blink: return "Rest for a moment"
-        case .lookLeft: return "Shift your focus"
-        case .lookRight: return "Shift your focus"
-        case .lookUp: return "Change your view"
-        case .lookDown: return "Relax your gaze"
-        case .lookAround: return "Take a visual break"
-        case .custom: return "Eye care reminder"
+        case .blink: return L10n.text("Rest for a moment")
+        case .lookLeft: return L10n.text("Shift your focus")
+        case .lookRight: return L10n.text("Shift your focus")
+        case .lookUp: return L10n.text("Change your view")
+        case .lookDown: return L10n.text("Relax your gaze")
+        case .lookAround: return L10n.text("Take a visual break")
+        case .custom: return L10n.text("Eye care reminder")
         }
     }
     
@@ -319,13 +319,13 @@ extension AmbientReminderManager {
     private func showOutsideWorkHoursAlert() {
         let settings = AppSettings.shared
         let alert = NSAlert()
-        alert.messageText = "Outside Work Hours"
-        alert.informativeText = "Your Smart Schedule is active and ambient reminders are currently paused.\n\nWork Hours: \(settings.timeString(from: settings.workHoursStart)) - \(settings.timeString(from: settings.workHoursEnd))\n\nWould you like to show a reminder anyway?"
+        alert.messageText = L10n.text("Outside Work Hours")
+        alert.informativeText = L10n.format("Your Smart Schedule is active and ambient reminders are currently paused.\n\nWork Hours: %@ - %@\n\nWould you like to show a reminder anyway?", settings.timeString(from: settings.workHoursStart), settings.timeString(from: settings.workHoursEnd))
         alert.alertStyle = .informational
-        alert.icon = NSImage(systemSymbolName: "eye.circle", accessibilityDescription: "Ambient Reminder")
+        alert.icon = NSImage(systemSymbolName: "eye.circle", accessibilityDescription: L10n.text("Ambient Reminder"))
         
-        alert.addButton(withTitle: "Show Anyway")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: L10n.text("Show Anyway"))
+        alert.addButton(withTitle: L10n.text("Cancel"))
         
         let response = alert.runModal()
         

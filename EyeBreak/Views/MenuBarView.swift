@@ -91,11 +91,11 @@ struct MenuBarView: View {
     
     private var statusText: String {
         switch timerManager.state {
-        case .idle: return "Ready to start"
-        case .working: return "Working"
-        case .preBreak: return "Break soon"
-        case .breaking: return "On break"
-        case .paused: return "Paused"
+        case .idle: return L10n.text("Ready to start")
+        case .working: return L10n.text("Working")
+        case .preBreak: return L10n.text("Break soon")
+        case .breaking: return L10n.text("On break")
+        case .paused: return L10n.text("Paused")
         }
     }
     
@@ -161,7 +161,7 @@ struct MenuBarView: View {
                                 .fontWeight(.bold)
                                 .contentTransition(.numericText())
                             
-                            Text("remaining")
+                            Text(L10n.text("remaining"))
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
@@ -209,13 +209,13 @@ struct MenuBarView: View {
                                 )
                                 .contentTransition(.numericText())
                             
-                            Text("seconds")
+                            Text(L10n.text("seconds"))
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
                     }
                     
-                    Text("👁️ Rest your eyes")
+                    Text(L10n.text("👁️ Rest your eyes"))
                         .font(.caption)
                         .foregroundColor(.green)
                         .transition(.scale.combined(with: .opacity))
@@ -236,7 +236,7 @@ struct MenuBarView: View {
                         )
                         .symbolEffect(.bounce.byLayer, options: .repeating)
                     
-                    Text("\(seconds)s until break")
+                    Text(L10n.format("%@s until break", seconds))
                         .font(.system(.title3, design: .monospaced))
                         .fontWeight(.semibold)
                         .foregroundStyle(
@@ -248,7 +248,7 @@ struct MenuBarView: View {
                         )
                         .contentTransition(.numericText())
                     
-                    Text("Prepare to rest")
+                    Text(L10n.text("Prepare to rest"))
                         .font(.caption)
                         .foregroundColor(.orange)
                 }
@@ -284,7 +284,7 @@ struct MenuBarView: View {
                     HStack {
                         Image(systemName: "play.circle.fill")
                             .font(.title3)
-                        Text("Start Timer")
+                        Text(L10n.text("Start Timer"))
                             .fontWeight(.semibold)
                     }
                     .frame(maxWidth: .infinity)
@@ -312,7 +312,7 @@ struct MenuBarView: View {
                     }) {
                         HStack {
                             Image(systemName: "stop.circle.fill")
-                            Text("Stop")
+                            Text(L10n.text("Stop"))
                                 .fontWeight(.medium)
                         }
                         .frame(maxWidth: .infinity)
@@ -334,7 +334,7 @@ struct MenuBarView: View {
                     }) {
                         HStack {
                             Image(systemName: "eye.slash.circle.fill")
-                            Text("Break Now")
+                            Text(L10n.text("Break Now"))
                                 .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
@@ -357,7 +357,7 @@ struct MenuBarView: View {
                     HStack {
                         Image(systemName: "play.circle.fill")
                             .font(.title3)
-                        Text("Resume Timer")
+                        Text(L10n.text("Resume Timer"))
                             .fontWeight(.semibold)
                     }
                     .frame(maxWidth: .infinity)
@@ -382,7 +382,7 @@ struct MenuBarView: View {
     
     private var quickStatsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Today's Progress")
+            Text(L10n.text("Today's Progress"))
                 .font(.caption)
                 .foregroundColor(.secondary)
             
@@ -390,14 +390,14 @@ struct MenuBarView: View {
                 StatBadge(
                     icon: "checkmark.circle.fill",
                     value: "\(settings.getTodayStats().breaksCompleted)",
-                    label: "Breaks",
+                    label: L10n.text("Breaks"),
                     color: .green
                 )
                 
                 StatBadge(
                     icon: "flame.fill",
                     value: "\(settings.getTodayStats().breaksCompleted)/\(settings.dailyBreakGoal)",
-                    label: "Goal",
+                    label: L10n.text("Goal"),
                     color: .orange
                 )
             }
@@ -411,7 +411,7 @@ struct MenuBarView: View {
         VStack(spacing: 0) {
             Button(action: { openWindow(id: "settings") }) {
                 HStack {
-                    Label("Settings", systemImage: "gear")
+                    Label(L10n.text("Settings"), systemImage: "gear")
                     Spacer()
                 }
                 .contentShape(Rectangle())
@@ -425,7 +425,7 @@ struct MenuBarView: View {
             
             Button(action: { NSApplication.shared.terminate(nil) }) {
                 HStack {
-                    Label("Quit EyeBreak", systemImage: "xmark.circle")
+                    Label(L10n.text("Quit EyeBreak"), systemImage: "xmark.circle")
                     Spacer()
                 }
                 .contentShape(Rectangle())

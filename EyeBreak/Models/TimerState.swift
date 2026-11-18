@@ -27,15 +27,15 @@ enum TimerState: Equatable {
     var displayText: String {
         switch self {
         case .idle:
-            return "Ready to start"
+            return L10n.text("Ready to start")
         case .working(let seconds):
-            return "Next break in \(formatTime(seconds))"
+            return L10n.format("Next break in %@", formatTime(seconds))
         case .preBreak(let seconds):
-            return "Break starting in \(seconds)s"
+            return L10n.format("Break starting in %@s", seconds)
         case .breaking(let seconds):
-            return "Break time! \(seconds)s remaining"
+            return L10n.format("Break time! %@s remaining", seconds)
         case .paused(_, let seconds):
-            return "Paused - \(formatTime(seconds)) remaining"
+            return L10n.format("Paused - %@ remaining", formatTime(seconds))
         }
     }
     
@@ -57,11 +57,11 @@ enum BreakStyle: String, CaseIterable, Identifiable {
     var description: String {
         switch self {
         case .blurScreen:
-            return "Blur your screen during breaks"
+            return L10n.text("Blur your screen during breaks")
         case .notificationOnly:
-            return "Show a small floating reminder window"
+            return L10n.text("Show a small floating reminder window")
         case .eyeExercise:
-            return "Guided eye exercise instructions"
+            return L10n.text("Guided eye exercise instructions")
         }
     }
     
@@ -133,9 +133,9 @@ enum WaterReminderStyle: String, CaseIterable, Identifiable {
     var description: String {
         switch self {
         case .blurScreen:
-            return "Full screen blur overlay with water reminder"
+            return L10n.text("Full screen blur overlay with water reminder")
         case .ambient:
-            return "Gentle floating reminder window at top of screen"
+            return L10n.text("Gentle floating reminder window at top of screen")
         }
     }
 }

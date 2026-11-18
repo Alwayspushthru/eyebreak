@@ -63,15 +63,15 @@ class LaunchAtLoginManager {
     var statusDescription: String {
         switch appService.status {
         case .notRegistered:
-            return "Not registered"
+            return L10n.text("Not registered")
         case .enabled:
-            return "Enabled"
+            return L10n.text("Enabled")
         case .requiresApproval:
-            return "Requires approval in System Settings"
+            return L10n.text("Requires approval in System Settings")
         case .notFound:
-            return "Service not found"
+            return L10n.text("Service not found")
         @unknown default:
-            return "Unknown status"
+            return L10n.text("Unknown status")
         }
     }
     

@@ -21,11 +21,11 @@ enum ColorThemeType: String, Codable, CaseIterable, Identifiable {
     var description: String {
         switch self {
         case .defaultTheme:
-            return "Classic vibrant style with rich colors"
+            return L10n.text("Classic vibrant style with rich colors")
         case .randomColor:
-            return "Surprise! A fresh color every time"
+            return L10n.text("Surprise! A fresh color every time")
         case .custom:
-            return "Create your own personalized theme"
+            return L10n.text("Create your own personalized theme")
         }
     }
     

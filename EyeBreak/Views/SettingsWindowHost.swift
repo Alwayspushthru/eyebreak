@@ -18,6 +18,8 @@ import SwiftUI
 import AppKit
 
 struct SettingsWindowHost: View {
+    static let windowID = "settings"
+
     @State private var isWindowVisible = false
 
     var body: some View {
@@ -71,6 +73,7 @@ private struct WindowVisibilityReader: NSViewRepresentable {
                 onVisibilityChange?(false)
                 return
             }
+            window.identifier = NSUserInterfaceItemIdentifier(SettingsWindowHost.windowID)
 
             let center = NotificationCenter.default
             for name in [

@@ -10,45 +10,47 @@ import SwiftUI
 @main
 struct EyeBreakApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @ObservedObject private var localization = AppLocalization.shared
     
     var body: some Scene {
         // Settings window - shown on first launch
-        Window("EyeBreak Settings", id: "settings") {
+        Window(L10n.text("EyeBreak Settings"), id: SettingsWindowHost.windowID) {
             SettingsWindowHost()
+                .environment(\.locale, localization.locale)
         }
         .defaultSize(width: 700, height: 600)
         .defaultPosition(.center)
         .commands {
             CommandGroup(replacing: .appInfo) {
-                Button("About EyeBreak") {
+                Button(L10n.text("About EyeBreak")) {
                     NSApplication.shared.orderFrontStandardAboutPanel()
                 }
             }
             
             CommandGroup(after: .appSettings) {
-                Button("Start Timer") {
+                Button(L10n.text("Start Timer")) {
                     BreakTimerManager.shared.start()
                 }
                 .keyboardShortcut("s", modifiers: [.command, .shift])
                 
-                Button("Take Break Now") {
+                Button(L10n.text("Take Break Now")) {
                     BreakTimerManager.shared.takeBreakNow()
                 }
                 .keyboardShortcut("b", modifiers: [.command, .shift])
                 
-                Button("Stop Timer") {
+                Button(L10n.text("Stop Timer")) {
                     BreakTimerManager.shared.stop()
                 }
                 .keyboardShortcut("x", modifiers: [.command, .shift])
                 
                 Divider()
                 
-                Button("Show Ambient Reminder") {
+                Button(L10n.text("Show Ambient Reminder")) {
                     AmbientReminderManager.shared.showAmbientReminder()
                 }
                 .keyboardShortcut("r", modifiers: [.command, .shift])
                 
-                Button("Show Water Reminder") {
+                Button(L10n.text("Show Water Reminder")) {
                     WaterReminderManager.shared.showWaterReminderNow()
                 }
                 .keyboardShortcut("w", modifiers: [.command, .shift])

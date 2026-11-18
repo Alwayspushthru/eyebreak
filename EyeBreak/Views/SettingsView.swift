@@ -11,6 +11,7 @@ struct SettingsView: View {
     @EnvironmentObject var timerManager: BreakTimerManager
     @EnvironmentObject var settings: AppSettings
     @Environment(\.openWindow) var openWindow
+    @ObservedObject private var localization = AppLocalization.shared
 
     @State private var selectedTab: Tab = .general
 
@@ -53,7 +54,7 @@ struct SettingsView: View {
                             .foregroundStyle(selectedTab == tab ? tab.color : .secondary)
                     }
 
-                    Text(tab.rawValue)
+                    Text(L10n.text(tab.rawValue))
                         .font(.system(size: 13, weight: selectedTab == tab ? .semibold : .regular))
                         .foregroundColor(selectedTab == tab ? .primary : .secondary)
                 }
@@ -68,6 +69,7 @@ struct SettingsView: View {
                 TimerStatusBanner()
                     .environmentObject(timerManager)
                     .environmentObject(settings)
+                    .id(localization.language)
 
                 Divider()
 
@@ -87,10 +89,12 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .transition(.opacity.combined(with: .move(edge: .trailing)))
                 .animation(.easeInOut(duration: 0.2), value: selectedTab)
-                .id(selectedTab) // Force view recreation for animation
+                .id(selectedTab)
+                .id(localization.language)
             }
         }
-        .navigationTitle("EyeBreak Settings")
+        .environment(\.locale, localization.locale)
+        .navigationTitle(L10n.text("EyeBreak Settings"))
     }
 }
 
@@ -134,10 +138,10 @@ struct UnifiedCountdownCard: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Active Timers")
+                    Text(L10n.text("Active Timers"))
                         .font(.headline)
                         .fontWeight(.semibold)
-                    Text("All your health reminders at a glance")
+                    Text(L10n.text("All your health reminders at a glance"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -150,7 +154,7 @@ struct UnifiedCountdownCard: View {
                 // Eye Break Timer
                 CountdownRow(
                     icon: "eye.fill",
-                    title: "Next Eye Break",
+                    title: L10n.text("Next Eye Break"),
                     color: .blue,
                     countdown: eyeBreakCountdown,
                     isActive: eyeBreakIsActive,
@@ -163,7 +167,7 @@ struct UnifiedCountdownCard: View {
                 // Ambient Reminder Timer
                 CountdownRow(
                     icon: "sparkles",
-                    title: "Ambient Reminder",
+                    title: L10n.text("Ambient Reminder"),
                     color: .orange,
                     countdown: ambientCountdown,
                     isActive: ambientManager.isEnabled,
@@ -176,7 +180,7 @@ struct UnifiedCountdownCard: View {
                 // Water Reminder Timer
                 CountdownRow(
                     icon: "drop.fill",
-                    title: "Water Reminder",
+                    title: L10n.text("Water Reminder"),
                     color: .cyan,
                     countdown: waterCountdown,
                     isActive: waterManager.isEnabled,
@@ -339,7 +343,7 @@ struct CountdownRow: View {
                         .fill(statusColor)
                         .frame(width: 6, height: 6)
                     
-                    Text(status)
+                    Text(L10n.text(status))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -362,11 +366,11 @@ struct CountdownRow: View {
                     .contentTransition(.numericText())
                 
                 if isActive {
-                    Text("remaining")
+                    Text(L10n.text("remaining"))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 } else {
-                    Text("interval")
+                    Text(L10n.text("interval"))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
@@ -395,10 +399,23 @@ struct CountdownRow: View {
 
 struct GeneralSettingsView: View {
     @EnvironmentObject var settings: AppSettings
+    @ObservedObject private var localization = AppLocalization.shared
     
     var body: some View {
         Form {
-            // Unified Countdown Display at the top
+            Section {
+                LabeledContent(L10n.text("Language")) {
+                    Picker(L10n.text("Language"), selection: $localization.language) {
+                        ForEach(AppLanguage.allCases) { language in
+                            Text(verbatim: language.name).tag(language)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.segmented)
+                    .frame(width: 200)
+                }
+            }
+
             Section {
                 UnifiedCountdownCard()
             } header: {
@@ -408,45 +425,45 @@ struct GeneralSettingsView: View {
             .listRowBackground(Color.clear)
             
             Section {
-                Toggle("Launch at Login", isOn: Binding(
+                Toggle(L10n.text("Launch at Login"), isOn: Binding(
                     get: { settings.launchAtLogin },
                     set: { newValue in
                         settings.launchAtLogin = newValue
                         LaunchAtLoginManager.shared.setEnabled(newValue)
                     }
                 ))
-                .help("Automatically start EyeBreak when you log in to your Mac")
+                .help(L10n.text("Automatically start EyeBreak when you log in to your Mac"))
                 
-                Toggle("Auto-Start Timer", isOn: $settings.autoStartTimer)
-                    .help("Automatically start the break timer when the app launches")
+                Toggle(L10n.text("Auto-Start Timer"), isOn: $settings.autoStartTimer)
+                    .help(L10n.text("Automatically start the break timer when the app launches"))
                 
-                Toggle("Enable Sound Effects", isOn: $settings.soundEnabled)
+                Toggle(L10n.text("Enable Sound Effects"), isOn: $settings.soundEnabled)
                 
-                Toggle("Idle Detection", isOn: $settings.idleDetectionEnabled)
+                Toggle(L10n.text("Idle Detection"), isOn: $settings.idleDetectionEnabled)
                 
                 if settings.idleDetectionEnabled {
-                    Picker("Idle Threshold", selection: $settings.idleThresholdMinutes) {
-                        Text("3 minutes").tag(3)
-                        Text("5 minutes").tag(5)
-                        Text("10 minutes").tag(10)
-                        Text("15 minutes").tag(15)
+                    Picker(L10n.text("Idle Threshold"), selection: $settings.idleThresholdMinutes) {
+                        Text(L10n.text("3 minutes")).tag(3)
+                        Text(L10n.text("5 minutes")).tag(5)
+                        Text(L10n.text("10 minutes")).tag(10)
+                        Text(L10n.text("15 minutes")).tag(15)
                     }
                 }
             } header: {
-                SectionHeaderView(title: "General", icon: "gearshape.fill", color: .gray)
+                SectionHeaderView(title: L10n.text("General"), icon: "gearshape.fill", color: .gray)
             }
 
             Section {
-                Picker("Session Type", selection: $settings.sessionType) {
+                Picker(L10n.text("Session Type"), selection: $settings.sessionType) {
                     ForEach(SessionType.allCases) { type in
-                        Text(type.rawValue).tag(type)
+                        Text(L10n.text(type.rawValue)).tag(type)
                     }
                 }
                 .onChange(of: settings.sessionType) { _, _ in
                     // Session type change will automatically update intervals
                 }
             } header: {
-                SectionHeaderView(title: "Session Type", icon: "clock.badge.checkmark", color: .blue)
+                SectionHeaderView(title: L10n.text("Session Type"), icon: "clock.badge.checkmark", color: .blue)
             } footer: {
                 Text(sessionTypeDescription)
             }
@@ -454,9 +471,9 @@ struct GeneralSettingsView: View {
             Section {
                 SmartScheduleView()
             } header: {
-                SectionHeaderView(title: "Smart Schedule", icon: "calendar.badge.clock", color: .purple)
+                SectionHeaderView(title: L10n.text("Smart Schedule"), icon: "calendar.badge.clock", color: .purple)
             } footer: {
-                Text("Automatically pause breaks outside your work hours")
+                Text(L10n.text("Automatically pause breaks outside your work hours"))
             }
 
             Section {
@@ -465,13 +482,13 @@ struct GeneralSettingsView: View {
                 }) {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
-                        Text("Reset to Defaults")
+                        Text(L10n.text("Reset to Defaults"))
                     }
                     .foregroundColor(.red)
                 }
                 .buttonStyle(.plain)
             } header: {
-                SectionHeaderView(title: "Reset", icon: "arrow.triangle.2.circlepath", color: .red)
+                SectionHeaderView(title: L10n.text("Reset"), icon: "arrow.triangle.2.circlepath", color: .red)
             }
         }
         .formStyle(.grouped)
@@ -481,11 +498,11 @@ struct GeneralSettingsView: View {
     private var sessionTypeDescription: String {
         switch settings.sessionType {
         case .standard:
-            return "20-20-20 rule: Every 20 minutes, look 20 feet away for 20 seconds"
+            return L10n.text("20-20-20 rule: Every 20 minutes, look 20 feet away for 20 seconds")
         case .pomodoro:
-            return "Pomodoro technique: 25 minutes of work, 5 minutes break"
+            return L10n.text("Pomodoro technique: 25 minutes of work, 5 minutes break")
         case .custom:
-            return "Customize your own work and break intervals"
+            return L10n.text("Customize your own work and break intervals")
         }
     }
 }
@@ -501,9 +518,9 @@ struct BreakSettingsView: View {
             Section {
                 VStack(spacing: 12) {
                     EnhancedSliderCard(
-                        title: "Work Interval",
+                        title: L10n.text("Work Interval"),
                         value: settings.workIntervalMinutes,
-                        unit: "min",
+                        unit: L10n.text("min"),
                         icon: "desktopcomputer",
                         color: .blue,
                         range: 10...60
@@ -512,9 +529,9 @@ struct BreakSettingsView: View {
                     }
 
                     EnhancedSliderCard(
-                        title: "Break Duration",
+                        title: L10n.text("Break Duration"),
                         value: settings.breakDurationSeconds,
-                        unit: "sec",
+                        unit: L10n.text("sec"),
                         icon: "eye.slash",
                         color: .green,
                         range: 10...120
@@ -523,9 +540,9 @@ struct BreakSettingsView: View {
                     }
 
                     EnhancedSliderCard(
-                        title: "Pre-Break Warning",
+                        title: L10n.text("Pre-Break Warning"),
                         value: settings.preBreakWarningSeconds,
-                        unit: "sec",
+                        unit: L10n.text("sec"),
                         icon: "bell.fill",
                         color: .orange,
                         range: 10...60
@@ -534,7 +551,7 @@ struct BreakSettingsView: View {
                     }
                 }
             } header: {
-                SectionHeaderView(title: "Timing", icon: "clock.fill", color: .blue)
+                SectionHeaderView(title: L10n.text("Timing"), icon: "clock.fill", color: .blue)
             }
 
             // MARK: - Break Style Section
@@ -554,7 +571,7 @@ struct BreakSettingsView: View {
                     Button(action: previewBreakStyle) {
                         HStack {
                             Image(systemName: "play.circle.fill")
-                            Text("Preview Break Style")
+                            Text(L10n.text("Preview Break Style"))
                                 .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
@@ -573,16 +590,16 @@ struct BreakSettingsView: View {
                     .buttonStyle(ProfessionalButtonStyle(color: .purple))
                 }
             } header: {
-                SectionHeaderView(title: "Break Style", icon: "sparkles.rectangle.stack.fill", color: .purple)
+                SectionHeaderView(title: L10n.text("Break Style"), icon: "sparkles.rectangle.stack.fill", color: .purple)
             }
 
             // MARK: - Eye Exercise Section
             Section {
                 VStack(spacing: 12) {
                     EnhancedSliderCard(
-                        title: "Exercise Interval",
+                        title: L10n.text("Exercise Interval"),
                         value: settings.exerciseIntervalSeconds,
-                        unit: "sec",
+                        unit: L10n.text("sec"),
                         icon: "arrow.triangle.2.circlepath",
                         color: .cyan,
                         range: 2...10
@@ -591,9 +608,9 @@ struct BreakSettingsView: View {
                     }
 
                     EnhancedSliderCard(
-                        title: "Exercise Duration",
+                        title: L10n.text("Exercise Duration"),
                         value: settings.eyeExerciseDurationSeconds / 60,
-                        unit: "min",
+                        unit: L10n.text("min"),
                         icon: "figure.walk",
                         color: .teal,
                         range: 1...30
@@ -604,14 +621,14 @@ struct BreakSettingsView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "info.circle")
                             .foregroundColor(.secondary)
-                        Text("Exercise interval controls how long to hold each eye position")
+                        Text(L10n.text("Exercise interval controls how long to hold each eye position"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                     .padding(.horizontal, 4)
                 }
             } header: {
-                SectionHeaderView(title: "Eye Exercise", icon: "eye.circle.fill", color: .cyan)
+                SectionHeaderView(title: L10n.text("Eye Exercise"), icon: "eye.circle.fill", color: .cyan)
             }
 
             // MARK: - Ambient Reminders Section
@@ -641,9 +658,9 @@ struct BreakSettingsView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Enable Ambient Reminders")
+                            Text(L10n.text("Enable Ambient Reminders"))
                                 .font(.headline)
-                            Text("Cute periodic reminders while you work")
+                            Text(L10n.text("Cute periodic reminders while you work"))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -690,9 +707,9 @@ struct BreakSettingsView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         // Enhanced interval slider
                         EnhancedSliderCard(
-                            title: "Reminder Interval",
+                            title: L10n.text("Reminder Interval"),
                             value: settings.ambientReminderIntervalMinutes,
-                            unit: "min",
+                            unit: L10n.text("min"),
                             icon: "clock.fill",
                             color: .blue,
                             range: 1...15
@@ -702,9 +719,9 @@ struct BreakSettingsView: View {
                         
                         // Enhanced duration slider
                         EnhancedSliderCard(
-                            title: "Display Duration",
+                            title: L10n.text("Display Duration"),
                             value: settings.ambientReminderDurationSeconds,
-                            unit: "sec",
+                            unit: L10n.text("sec"),
                             icon: "timer",
                             color: .green,
                             range: 3...15
@@ -721,7 +738,7 @@ struct BreakSettingsView: View {
                             HStack {
                                 Image(systemName: "sparkles")
                                     .symbolEffect(.pulse)
-                                Text("Show Reminder Now")
+                                Text(L10n.text("Show Reminder Now"))
                                     .fontWeight(.semibold)
                             }
                             .frame(maxWidth: .infinity)
@@ -742,7 +759,7 @@ struct BreakSettingsView: View {
                         HStack {
                             Image(systemName: "keyboard")
                                 .foregroundColor(.secondary)
-                            Text("Press ⌘⇧R to test anytime")
+                            Text(L10n.text("Press ⌘⇧R to test anytime"))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -755,12 +772,12 @@ struct BreakSettingsView: View {
                             HStack {
                                 Image(systemName: "wand.and.stars")
                                     .foregroundColor(.purple)
-                                Text("Customize Your Reminder")
+                                Text(L10n.text("Customize Your Reminder"))
                                     .font(.headline)
                                     .fontWeight(.semibold)
                             }
                             
-                            Toggle("Use Custom Reminder", isOn: $settings.useCustomReminder)
+                            Toggle(L10n.text("Use Custom Reminder"), isOn: $settings.useCustomReminder)
                                 .toggleStyle(.switch)
                                 .padding(.horizontal, 4)
                             
@@ -768,7 +785,7 @@ struct BreakSettingsView: View {
                                 VStack(alignment: .leading, spacing: 16) {
                                     // Professional SF Symbol picker
                                     VStack(alignment: .leading, spacing: 12) {
-                                        Label("Choose Icon", systemImage: "star.circle")
+                                        Label(L10n.text("Choose Icon"), systemImage: "star.circle")
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                             .foregroundColor(.secondary)
@@ -788,12 +805,12 @@ struct BreakSettingsView: View {
                                     
                                     // Custom message input - refined
                                     VStack(alignment: .leading, spacing: 12) {
-                                        Label("Reminder Message", systemImage: "text.bubble")
+                                        Label(L10n.text("Reminder Message"), systemImage: "text.bubble")
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                             .foregroundColor(.secondary)
                                         
-                                        TextField("e.g., \"Take a deep breath\" or \"Look away\"", text: $settings.customReminderMessage)
+                                        TextField(L10n.text("e.g., \"Take a deep breath\" or \"Look away\""), text: $settings.customReminderMessage)
                                             .textFieldStyle(.roundedBorder)
                                             .font(.system(size: 14))
                                         
@@ -814,7 +831,7 @@ struct BreakSettingsView: View {
                                                     Text(settings.customReminderMessage)
                                                         .font(.system(size: 13, weight: .semibold))
                                                         .foregroundColor(.primary)
-                                                    Text("Preview")
+                                                    Text(L10n.text("Preview"))
                                                         .font(.caption2)
                                                         .foregroundColor(.secondary)
                                                 }
@@ -842,9 +859,9 @@ struct BreakSettingsView: View {
                     }
                 }
             } header: {
-                SectionHeaderView(title: "Ambient Reminders", icon: "sparkles", color: .orange)
+                SectionHeaderView(title: L10n.text("Ambient Reminders"), icon: "sparkles", color: .orange)
             } footer: {
-                Text("Gentle reminders appear while you work to encourage blinking and looking away. They don't interrupt your workflow.")
+                Text(L10n.text("Gentle reminders appear while you work to encourage blinking and looking away. They don't interrupt your workflow."))
                     .font(.caption)
             }
             
@@ -875,9 +892,9 @@ struct BreakSettingsView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Enable Water Reminders")
+                            Text(L10n.text("Enable Water Reminders"))
                                 .font(.headline)
-                            Text("Stay hydrated with gentle reminders")
+                            Text(L10n.text("Stay hydrated with gentle reminders"))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -927,17 +944,17 @@ struct BreakSettingsView: View {
                             HStack {
                                 Image(systemName: "clock.fill")
                                     .foregroundColor(.blue)
-                                Text("Reminder Interval")
+                                Text(L10n.text("Reminder Interval"))
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                             }
                             
-                            Picker("Interval", selection: $settings.waterReminderInterval) {
-                                Text("30 minutes").tag(TimeInterval(1800))
-                                Text("45 minutes").tag(TimeInterval(2700))
-                                Text("1 hour").tag(TimeInterval(3600))
-                                Text("1.5 hours").tag(TimeInterval(5400))
-                                Text("2 hours").tag(TimeInterval(7200))
+                            Picker(L10n.text("Interval"), selection: $settings.waterReminderInterval) {
+                                Text(L10n.text("30 minutes")).tag(TimeInterval(1800))
+                                Text(L10n.text("45 minutes")).tag(TimeInterval(2700))
+                                Text(L10n.text("1 hour")).tag(TimeInterval(3600))
+                                Text(L10n.text("1.5 hours")).tag(TimeInterval(5400))
+                                Text(L10n.text("2 hours")).tag(TimeInterval(7200))
                             }
                             .pickerStyle(.segmented)
                             .onChange(of: settings.waterReminderInterval) { _, _ in
@@ -963,14 +980,14 @@ struct BreakSettingsView: View {
                             HStack {
                                 Image(systemName: "bell.badge.fill")
                                     .foregroundColor(.cyan)
-                                Text("Reminder Style")
+                                Text(L10n.text("Reminder Style"))
                                     .font(.subheadline)
                                     .fontWeight(.medium)
                             }
                             
-                            Picker("Style", selection: $settings.waterReminderStyle) {
+                            Picker(L10n.text("Style"), selection: $settings.waterReminderStyle) {
                                 ForEach(WaterReminderStyle.allCases) { style in
-                                    Text(style.rawValue).tag(style)
+                                    Text(L10n.text(style.rawValue)).tag(style)
                                 }
                             }
                             .pickerStyle(.segmented)
@@ -999,7 +1016,7 @@ struct BreakSettingsView: View {
                             HStack {
                                 Image(systemName: "drop.fill")
                                     .symbolEffect(.pulse)
-                                Text("Show Water Reminder Now")
+                                Text(L10n.text("Show Water Reminder Now"))
                                     .fontWeight(.semibold)
                             }
                             .frame(maxWidth: .infinity)
@@ -1020,7 +1037,7 @@ struct BreakSettingsView: View {
                         HStack {
                             Image(systemName: "keyboard")
                                 .foregroundColor(.secondary)
-                            Text("Press ⌘⇧W to test anytime")
+                            Text(L10n.text("Press ⌘⇧W to test anytime"))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -1033,12 +1050,12 @@ struct BreakSettingsView: View {
                             HStack {
                                 Image(systemName: "wand.and.stars")
                                     .foregroundColor(.blue)
-                                Text("Customize Your Water Reminder")
+                                Text(L10n.text("Customize Your Water Reminder"))
                                     .font(.headline)
                                     .fontWeight(.semibold)
                             }
                             
-                            Toggle("Use Custom Reminder", isOn: $settings.useCustomWaterReminder)
+                            Toggle(L10n.text("Use Custom Reminder"), isOn: $settings.useCustomWaterReminder)
                                 .toggleStyle(.switch)
                                 .padding(.horizontal, 4)
                             
@@ -1046,7 +1063,7 @@ struct BreakSettingsView: View {
                                 VStack(alignment: .leading, spacing: 16) {
                                     // SF Symbol picker for water reminder
                                     VStack(alignment: .leading, spacing: 12) {
-                                        Label("Choose Icon", systemImage: "star.circle")
+                                        Label(L10n.text("Choose Icon"), systemImage: "star.circle")
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                             .foregroundColor(.secondary)
@@ -1066,12 +1083,12 @@ struct BreakSettingsView: View {
                                     
                                     // Custom message input
                                     VStack(alignment: .leading, spacing: 12) {
-                                        Label("Reminder Message", systemImage: "text.bubble")
+                                        Label(L10n.text("Reminder Message"), systemImage: "text.bubble")
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                             .foregroundColor(.secondary)
                                         
-                                        TextField("e.g., \"Time to hydrate\" or \"Drink water\"", text: $settings.customWaterReminderMessage)
+                                        TextField(L10n.text("e.g., \"Time to hydrate\" or \"Drink water\""), text: $settings.customWaterReminderMessage)
                                             .textFieldStyle(.roundedBorder)
                                             .font(.system(size: 14))
                                         
@@ -1093,7 +1110,7 @@ struct BreakSettingsView: View {
                                                     Text(settings.customWaterReminderMessage)
                                                         .font(.system(size: 13, weight: .semibold))
                                                         .foregroundColor(.primary)
-                                                    Text("Preview")
+                                                    Text(L10n.text("Preview"))
                                                         .font(.caption2)
                                                         .foregroundColor(.secondary)
                                                 }
@@ -1120,9 +1137,9 @@ struct BreakSettingsView: View {
                     }
                 }
             } header: {
-                SectionHeaderView(title: "Water Reminders", icon: "drop.fill", color: .blue)
+                SectionHeaderView(title: L10n.text("Water Reminders"), icon: "drop.fill", color: .blue)
             } footer: {
-                Text("Stay hydrated for better focus and health. Reminders appear at your chosen interval.")
+                Text(L10n.text("Stay hydrated for better focus and health. Reminders appear at your chosen interval."))
                     .font(.caption)
             }
             
@@ -1131,7 +1148,7 @@ struct BreakSettingsView: View {
                 VStack(spacing: 20) {
                     // Ambient Reminder Theme
                     ThemeSettingsCard(
-                        title: "Ambient Reminder Theme",
+                        title: L10n.text("Ambient Reminder Theme"),
                         icon: "sparkles",
                         selectedThemeType: Binding(
                             get: { settings.ambientReminderThemeType },
@@ -1150,7 +1167,7 @@ struct BreakSettingsView: View {
                     
                     // Break Overlay Theme
                     ThemeSettingsCard(
-                        title: "Break Overlay Theme",
+                        title: L10n.text("Break Overlay Theme"),
                         icon: "moon.stars.fill",
                         selectedThemeType: Binding(
                             get: { settings.breakOverlayThemeType },
@@ -1169,7 +1186,7 @@ struct BreakSettingsView: View {
                     
                     // Water Reminder Theme - always show now since all styles support themes
                     ThemeSettingsCard(
-                        title: "Water Reminder Theme",
+                        title: L10n.text("Water Reminder Theme"),
                         icon: "drop.fill",
                         selectedThemeType: Binding(
                             get: { settings.waterReminderThemeType },
@@ -1220,24 +1237,24 @@ struct BreakSettingsView: View {
                     }
                 }
             } header: {
-                SectionHeaderView(title: "Color Themes", icon: "paintpalette.fill", color: .pink)
+                SectionHeaderView(title: L10n.text("Color Themes"), icon: "paintpalette.fill", color: .pink)
             } footer: {
-                Text("Customize the appearance of ambient reminders, break overlays, and water reminders. Choose from preset themes or create your own custom color scheme.")
+                Text(L10n.text("Customize the appearance of ambient reminders, break overlays, and water reminders. Choose from preset themes or create your own custom color scheme."))
                     .font(.caption)
             }
             
             Section {
                 Stepper(
-                    "Daily Break Goal: \(settings.dailyBreakGoal)",
+                    L10n.format("Daily Break Goal: %@", settings.dailyBreakGoal),
                     value: $settings.dailyBreakGoal,
                     in: 1...100
                 )
                 
-                Text("Set a target for breaks to take each day")
+                Text(L10n.text("Set a target for breaks to take each day"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             } header: {
-                SectionHeaderView(title: "Goals", icon: "target", color: .green)
+                SectionHeaderView(title: L10n.text("Goals"), icon: "target", color: .green)
             }
         }
         .formStyle(.grouped)
@@ -1304,11 +1321,12 @@ struct UpdateCheckCard: View {
 
     private var lastCheckedText: String {
         guard let date = updateChecker.lastUpdateCheckDate else {
-            return "Not checked yet"
+            return L10n.text("Not checked yet")
         }
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
-        return "Last checked \(formatter.localizedString(for: date, relativeTo: Date()))"
+        formatter.locale = AppLocalization.shared.locale
+        return L10n.format("Last checked %@", formatter.localizedString(for: date, relativeTo: Date()))
     }
 
     var body: some View {
@@ -1316,7 +1334,7 @@ struct UpdateCheckCard: View {
             HStack {
                 Image(systemName: "arrow.down.circle.fill")
                     .foregroundStyle(.blue)
-                Text("Updates")
+                Text(L10n.text("Updates"))
                     .font(.system(size: 14, weight: .semibold))
 
                 Spacer()
@@ -1329,18 +1347,18 @@ struct UpdateCheckCard: View {
             Button {
                 updateChecker.checkForUpdates()
             } label: {
-                Text("Check for Updates")
+                Text(L10n.text("Check for Updates"))
             }
             .disabled(!updateChecker.canCheckForUpdates)
 
             Toggle(isOn: $updateChecker.automaticallyChecksForUpdates) {
-                Text("Check automatically")
+                Text(L10n.text("Check automatically"))
                     .font(.system(size: 12))
             }
             .toggleStyle(.switch)
             .controlSize(.small)
 
-            Text("Updates install with one click — EyeBreak downloads the new version, replaces itself, and reopens. Every update is signature-verified before it is installed.")
+            Text(L10n.text("Updates install with one click — EyeBreak downloads the new version, replaces itself, and reopens. Every update is signature-verified before it is installed."))
                 .font(.system(size: 11))
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -1371,23 +1389,23 @@ struct KeyboardShortcutsCard: View {
             HStack {
                 Image(systemName: permission.isTrusted ? "keyboard.fill" : "exclamationmark.triangle.fill")
                     .foregroundStyle(permission.isTrusted ? .blue : .orange)
-                Text("Keyboard Shortcuts")
+                Text(L10n.text("Keyboard Shortcuts"))
                     .font(.system(size: 14, weight: .semibold))
 
                 Spacer()
 
-                Text(permission.isTrusted ? "Enabled" : "Needs permission")
+                Text(permission.isTrusted ? L10n.text("Enabled") : L10n.text("Needs permission"))
                     .font(.system(size: 11))
                     .foregroundColor(permission.isTrusted ? .secondary : .orange)
             }
 
             if !permission.isTrusted {
-                Text("macOS resets this permission whenever EyeBreak updates, which stops \u{2318}\u{21E7}B and the other shortcuts from working. Timers and break reminders are unaffected.")
+                Text(L10n.text("macOS resets this permission whenever EyeBreak updates, which stops \u{2318}\u{21E7}B and the other shortcuts from working. Timers and break reminders are unaffected."))
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Button("Open Accessibility Settings") {
+                Button(L10n.text("Open Accessibility Settings")) {
                     permission.openAccessibilitySettings()
                 }
             }
@@ -1458,7 +1476,7 @@ struct AboutView: View {
                             )
                         )
 
-                    Text("Version \(appVersion)")
+                    Text(L10n.format("Version %@", appVersion))
                         .font(.system(size: 14, weight: .medium, design: .rounded))
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 12)
@@ -1476,11 +1494,11 @@ struct AboutView: View {
                     HStack {
                         Image(systemName: "info.circle.fill")
                             .foregroundStyle(.blue)
-                        Text("About")
+                        Text(L10n.text("About"))
                             .font(.system(size: 14, weight: .semibold))
                     }
 
-                    Text("EyeBreak helps you reduce digital eye strain by following the 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds. Built with privacy in mind—all your data stays on your Mac.")
+                    Text(L10n.text("EyeBreak helps you reduce digital eye strain by following the 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds. Built with privacy in mind—all your data stays on your Mac."))
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
                         .lineSpacing(3)
@@ -1502,17 +1520,17 @@ struct AboutView: View {
                     HStack {
                         Image(systemName: "sparkles")
                             .foregroundStyle(.orange)
-                        Text("Key Features")
+                        Text(L10n.text("Key Features"))
                             .font(.system(size: 14, weight: .semibold))
                     }
 
                     VStack(spacing: 8) {
-                        FeatureRow(icon: "eye.fill", title: "20-20-20 Rule", description: "Scientifically-backed eye care")
-                        FeatureRow(icon: "timer", title: "Smart Timer", description: "Automatic break reminders")
-                        FeatureRow(icon: "drop.fill", title: "Water Reminders", description: "Stay hydrated")
-                        FeatureRow(icon: "sparkles", title: "Ambient Reminders", description: "Gentle exercise prompts")
-                        FeatureRow(icon: "calendar", title: "Smart Schedule", description: "Respects your work hours")
-                        FeatureRow(icon: "lock.fill", title: "Privacy First", description: "All data stays local")
+                        FeatureRow(icon: "eye.fill", title: L10n.text("20-20-20 Rule"), description: L10n.text("Scientifically-backed eye care"))
+                        FeatureRow(icon: "timer", title: L10n.text("Smart Timer"), description: L10n.text("Automatic break reminders"))
+                        FeatureRow(icon: "drop.fill", title: L10n.text("Water Reminders"), description: L10n.text("Stay hydrated"))
+                        FeatureRow(icon: "sparkles", title: L10n.text("Ambient Reminders"), description: L10n.text("Gentle exercise prompts"))
+                        FeatureRow(icon: "calendar", title: L10n.text("Smart Schedule"), description: L10n.text("Respects your work hours"))
+                        FeatureRow(icon: "lock.fill", title: L10n.text("Privacy First"), description: L10n.text("All data stays local"))
                     }
                 }
                 .padding(16)
@@ -1554,7 +1572,7 @@ struct AboutView: View {
                     Link(destination: URL(string: "https://github.com/cheat2001/eyebreak/issues")!) {
                         HStack {
                             Image(systemName: "exclamationmark.bubble")
-                            Text("Report Issue")
+                            Text(L10n.text("Report Issue"))
                         }
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.orange)
@@ -1575,7 +1593,7 @@ struct AboutView: View {
                 }
 
                 // Copyright
-                Text("© 2025 EyeBreak. All rights reserved.")
+                Text(L10n.text("© 2025 EyeBreak. All rights reserved."))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.bottom, 24)
@@ -1682,22 +1700,22 @@ struct TimerStatusBanner: View {
                             .foregroundColor(statusColor)
                         
                         if case .working(let seconds) = timerManager.state {
-                            Text("\(formatTime(seconds)) remaining")
+                            Text(L10n.format("%@ remaining", formatTime(seconds)))
                                 .font(.system(.subheadline, design: .monospaced))
                                 .foregroundColor(.secondary)
                                 .contentTransition(.numericText())
                         } else if case .breaking(let seconds) = timerManager.state {
-                            Text("\(seconds) seconds")
+                            Text(L10n.format("%@ seconds", seconds))
                                 .font(.system(.subheadline, design: .monospaced))
                                 .foregroundColor(.secondary)
                                 .contentTransition(.numericText())
                         } else if case .preBreak(let seconds) = timerManager.state {
-                            Text("Break in \(seconds)s")
+                            Text(L10n.format("Break in %@s", seconds))
                                 .font(.system(.subheadline, design: .monospaced))
                                 .foregroundColor(.orange)
                                 .contentTransition(.numericText())
                         } else {
-                            Text("Start your healthy eye habit")
+                            Text(L10n.text("Start your healthy eye habit"))
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
@@ -1825,15 +1843,15 @@ struct TimerStatusBanner: View {
     private var statusText: String {
         switch timerManager.state {
         case .idle:
-            return "Idle"
+            return L10n.text("Idle")
         case .working:
-            return "Next break in:"
+            return L10n.text("Next break in:")
         case .preBreak:
-            return "Break starting soon:"
+            return L10n.text("Break starting soon:")
         case .breaking:
-            return "Break time remaining:"
+            return L10n.text("Break time remaining:")
         case .paused:
-            return "Paused"
+            return L10n.text("Paused")
         }
     }
     
@@ -1857,7 +1875,7 @@ struct TimerStatusBanner: View {
                 Button {
                     timerManager.start()
                 } label: {
-                    Label("Start", systemImage: "play.fill")
+                    Label(L10n.text("Start"), systemImage: "play.fill")
                 }
                 .buttonStyle(.borderedProminent)
                 .keyboardShortcut("s", modifiers: [.command, .shift])
@@ -1866,7 +1884,7 @@ struct TimerStatusBanner: View {
                 Button {
                     timerManager.takeBreakNow()
                 } label: {
-                    Label("Break Now", systemImage: "pause.fill")
+                    Label(L10n.text("Break Now"), systemImage: "pause.fill")
                 }
                 .buttonStyle(.bordered)
                 .keyboardShortcut("b", modifiers: [.command, .shift])
@@ -1874,7 +1892,7 @@ struct TimerStatusBanner: View {
                 Button {
                     timerManager.stop()
                 } label: {
-                    Label("Stop", systemImage: "stop.fill")
+                    Label(L10n.text("Stop"), systemImage: "stop.fill")
                 }
                 .buttonStyle(.bordered)
                 .keyboardShortcut("x", modifiers: [.command, .shift])
@@ -1883,7 +1901,7 @@ struct TimerStatusBanner: View {
                 Button {
                     timerManager.skipBreak()
                 } label: {
-                    Label("Skip Break", systemImage: "forward.fill")
+                    Label(L10n.text("Skip Break"), systemImage: "forward.fill")
                 }
                 .buttonStyle(.bordered)
                 
@@ -1891,7 +1909,7 @@ struct TimerStatusBanner: View {
                 Button {
                     timerManager.resume()
                 } label: {
-                    Label("Resume", systemImage: "play.fill")
+                    Label(L10n.text("Resume"), systemImage: "play.fill")
                 }
                 .buttonStyle(.borderedProminent)
             }
@@ -2004,7 +2022,7 @@ struct BreakStyleOptionCard: View {
 
                 // Text
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(style.rawValue)
+                    Text(L10n.text(style.rawValue))
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(isSelected ? .primary : .secondary)
 
@@ -2148,22 +2166,22 @@ struct CustomIconPickerView: View {
     
     // Curated professional SF Symbols for eye care reminders
     let iconOptions: [(name: String, symbol: String)] = [
-        ("Eye", "eye"),
-        ("Eye Fill", "eye.fill"),
-        ("Sparkle", "sparkles"),
-        ("Star", "star.fill"),
-        ("Heart", "heart.fill"),
-        ("Drop", "drop.fill"),
-        ("Leaf", "leaf.fill"),
-        ("Moon", "moon.stars.fill"),
-        ("Sun", "sun.max.fill"),
-        ("Clock", "clock.fill"),
-        ("Bell", "bell.fill"),
-        ("Hand Raised", "hand.raised.fill"),
-        ("Figure Walk", "figure.walk"),
-        ("Lungs", "lungs.fill"),
-        ("Headphones", "headphones"),
-        ("Cup", "cup.and.saucer.fill")
+        (L10n.text("Eye"), "eye"),
+        (L10n.text("Eye Fill"), "eye.fill"),
+        (L10n.text("Sparkle"), "sparkles"),
+        (L10n.text("Star"), "star.fill"),
+        (L10n.text("Heart"), "heart.fill"),
+        (L10n.text("Drop"), "drop.fill"),
+        (L10n.text("Leaf"), "leaf.fill"),
+        (L10n.text("Moon"), "moon.stars.fill"),
+        (L10n.text("Sun"), "sun.max.fill"),
+        (L10n.text("Clock"), "clock.fill"),
+        (L10n.text("Bell"), "bell.fill"),
+        (L10n.text("Hand Raised"), "hand.raised.fill"),
+        (L10n.text("Figure Walk"), "figure.walk"),
+        (L10n.text("Lungs"), "lungs.fill"),
+        (L10n.text("Headphones"), "headphones"),
+        (L10n.text("Cup"), "cup.and.saucer.fill")
     ]
     
     var body: some View {
@@ -2183,7 +2201,7 @@ struct CustomIconPickerView: View {
             }
             
             if selectedIcon.isEmpty {
-                Text("Select an icon for your custom reminder")
+                Text(L10n.text("Select an icon for your custom reminder"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top, 4)
@@ -2230,22 +2248,22 @@ struct CustomWaterIconPickerView: View {
     
     // Curated water-related SF Symbols
     let iconOptions: [(name: String, symbol: String)] = [
-        ("Drop", "drop.fill"),
-        ("Water Bottle", "waterbottle.fill"),
-        ("Drop Circle", "drop.circle.fill"),
-        ("Drop Triangle", "drop.triangle.fill"),
-        ("Cup", "cup.and.saucer.fill"),
-        ("Mug", "mug.fill"),
-        ("Figure Water", "figure.water.fitness"),
-        ("Sparkles", "sparkles"),
-        ("Leaf", "leaf.fill"),
-        ("Heart", "heart.fill"),
-        ("Hands", "hands.and.sparkles.fill"),
-        ("Sun", "sun.max.fill"),
-        ("Moon", "moon.stars.fill"),
-        ("Clock", "clock.fill"),
-        ("Bell", "bell.fill"),
-        ("Hand Raised", "hand.raised.fill")
+        (L10n.text("Drop"), "drop.fill"),
+        (L10n.text("Water Bottle"), "waterbottle.fill"),
+        (L10n.text("Drop Circle"), "drop.circle.fill"),
+        (L10n.text("Drop Triangle"), "drop.triangle.fill"),
+        (L10n.text("Cup"), "cup.and.saucer.fill"),
+        (L10n.text("Mug"), "mug.fill"),
+        (L10n.text("Figure Water"), "figure.water.fitness"),
+        (L10n.text("Sparkles"), "sparkles"),
+        (L10n.text("Leaf"), "leaf.fill"),
+        (L10n.text("Heart"), "heart.fill"),
+        (L10n.text("Hands"), "hands.and.sparkles.fill"),
+        (L10n.text("Sun"), "sun.max.fill"),
+        (L10n.text("Moon"), "moon.stars.fill"),
+        (L10n.text("Clock"), "clock.fill"),
+        (L10n.text("Bell"), "bell.fill"),
+        (L10n.text("Hand Raised"), "hand.raised.fill")
     ]
     
     var body: some View {
@@ -2265,7 +2283,7 @@ struct CustomWaterIconPickerView: View {
             }
             
             if selectedIcon.isEmpty {
-                Text("Select an icon for your water reminder")
+                Text(L10n.text("Select an icon for your water reminder"))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.top, 4)
@@ -2341,7 +2359,7 @@ struct SmartScheduleView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Toggle("Enable Smart Schedule", isOn: $settings.smartScheduleEnabled)
+            Toggle(L10n.text("Enable Smart Schedule"), isOn: $settings.smartScheduleEnabled)
                 .font(.headline)
             
             if settings.smartScheduleEnabled {
@@ -2350,7 +2368,7 @@ struct SmartScheduleView: View {
                 
                 // Quick Presets
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Quick Presets")
+                    Text(L10n.text("Quick Presets"))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
@@ -2363,7 +2381,7 @@ struct SmartScheduleView: View {
                                 HStack {
                                     Image(systemName: preset == selectedPreset ? "checkmark.circle.fill" : "circle")
                                         .foregroundColor(preset == selectedPreset ? .blue : .secondary)
-                                    Text(preset.rawValue)
+                                    Text(L10n.text(preset.rawValue))
                                         .font(.caption)
                                         .lineLimit(1)
                                         .minimumScaleFactor(0.8)
@@ -2390,18 +2408,18 @@ struct SmartScheduleView: View {
                 
                 // Custom Work Hours
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Custom Work Hours")
+                    Text(L10n.text("Custom Work Hours"))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
                     
                     HStack(spacing: 16) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Start Time")
+                            Text(L10n.text("Start Time"))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
-                            Picker("Start", selection: $settings.workHoursStart) {
+                            Picker(L10n.text("Start"), selection: $settings.workHoursStart) {
                                 ForEach(0..<24) { hour in
                                     Text(settings.timeString(from: Double(hour)))
                                         .tag(Double(hour))
@@ -2418,11 +2436,11 @@ struct SmartScheduleView: View {
                             .foregroundColor(.secondary)
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("End Time")
+                            Text(L10n.text("End Time"))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             
-                            Picker("End", selection: $settings.workHoursEnd) {
+                            Picker(L10n.text("End"), selection: $settings.workHoursEnd) {
                                 ForEach(0..<24) { hour in
                                     Text(settings.timeString(from: Double(hour)))
                                         .tag(Double(hour))
@@ -2436,7 +2454,7 @@ struct SmartScheduleView: View {
                         }
                     }
                     
-                    Text("Breaks will only show between \(settings.timeString(from: settings.workHoursStart)) and \(settings.timeString(from: settings.workHoursEnd))")
+                    Text(L10n.format("Breaks will only show between %@ and %@", settings.timeString(from: settings.workHoursStart), settings.timeString(from: settings.workHoursEnd)))
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.top, 4)
@@ -2448,14 +2466,14 @@ struct SmartScheduleView: View {
                 // Active Days
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Text("Active Days")
+                        Text(L10n.text("Active Days"))
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
                         
                         Spacer()
                         
-                        Button(settings.pauseOnWeekends ? "Weekdays Only" : "All 7 Days") {
+                        Button(settings.pauseOnWeekends ? L10n.text("Weekdays Only") : L10n.text("All 7 Days")) {
                             settings.pauseOnWeekends.toggle()
                             if settings.pauseOnWeekends {
                                 settings.activeDays = [2, 3, 4, 5, 6] // Mon-Fri
@@ -2480,7 +2498,7 @@ struct SmartScheduleView: View {
                         }
                     }
                     
-                    Text("Select which days breaks should be active")
+                    Text(L10n.text("Select which days breaks should be active"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -2492,7 +2510,7 @@ struct SmartScheduleView: View {
                     Image(systemName: settings.shouldShowBreaksNow ? "checkmark.circle.fill" : "pause.circle.fill")
                         .foregroundColor(settings.shouldShowBreaksNow ? .green : .orange)
                     
-                    Text(settings.shouldShowBreaksNow ? "Breaks Active Now" : "Breaks Paused (Outside Work Hours)")
+                    Text(settings.shouldShowBreaksNow ? L10n.text("Breaks Active Now") : L10n.text("Breaks Paused (Outside Work Hours)"))
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(settings.shouldShowBreaksNow ? .green : .orange)
@@ -2559,6 +2577,6 @@ struct DayButton: View {
             )
         }
         .buttonStyle(.plain)
-        .help(isActive ? "Click to deactivate" : "Click to activate")
+        .help(isActive ? L10n.text("Click to deactivate") : L10n.text("Click to activate"))
     }
 }

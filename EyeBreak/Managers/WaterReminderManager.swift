@@ -154,7 +154,7 @@ class WaterReminderManager: ObservableObject {
         if settings.useCustomWaterReminder && !settings.customWaterReminderMessage.isEmpty {
             message = WaterMessage(
                 icon: settings.customWaterReminderIcon.isEmpty ? "drop.fill" : settings.customWaterReminderIcon,
-                title: "Water Reminder",
+                title: L10n.text("Water Reminder"),
                 message: settings.customWaterReminderMessage,
                 theme: theme
             )
@@ -163,8 +163,8 @@ class WaterReminderManager: ObservableObject {
             let preset = waterMessages.randomElement() ?? waterMessages[0]
             message = WaterMessage(
                 icon: preset.icon,
-                title: preset.title,
-                message: preset.message,
+                title: L10n.text(preset.title),
+                message: L10n.text(preset.message),
                 theme: theme
             )
         }
@@ -394,7 +394,7 @@ struct WaterReminderView: View {
                         .opacity(0.6)
                 }
                 .buttonStyle(.plain)
-                .help("Dismiss")
+                .help(L10n.text("Dismiss"))
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
@@ -524,7 +524,7 @@ struct WaterBlurOverlayView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "hand.tap.fill")
                             .font(.system(size: 18))
-                        Text("Thanks, I'll drink water now")
+                        Text(L10n.text("Thanks, I'll drink water now"))
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                     }
                     .foregroundColor(.white)
@@ -588,8 +588,8 @@ struct VisualEffectBlur: NSViewRepresentable {
     WaterReminderView(
         message: WaterMessage(
             icon: "drop.fill",
-            title: "Time for Water!",
-            message: "Stay hydrated! Take a sip of water.",
+            title: L10n.text("Time for Water!"),
+            message: L10n.text("Stay hydrated! Take a sip of water."),
             theme: ColorTheme(
                 themeType: .defaultTheme,
                 backgroundColorHex: "#4D99CC",  // Ocean blue
@@ -616,13 +616,13 @@ extension WaterReminderManager {
     private func showOutsideWorkHoursAlert() {
         let settings = AppSettings.shared
         let alert = NSAlert()
-        alert.messageText = "Outside Work Hours"
-        alert.informativeText = "Your Smart Schedule is active and water reminders are currently paused.\n\nWork Hours: \(settings.timeString(from: settings.workHoursStart)) - \(settings.timeString(from: settings.workHoursEnd))\n\nWould you like to show a reminder anyway?"
+        alert.messageText = L10n.text("Outside Work Hours")
+        alert.informativeText = L10n.format("Your Smart Schedule is active and water reminders are currently paused.\n\nWork Hours: %@ - %@\n\nWould you like to show a reminder anyway?", settings.timeString(from: settings.workHoursStart), settings.timeString(from: settings.workHoursEnd))
         alert.alertStyle = .informational
-        alert.icon = NSImage(systemSymbolName: "drop.circle", accessibilityDescription: "Water Reminder")
+        alert.icon = NSImage(systemSymbolName: "drop.circle", accessibilityDescription: L10n.text("Water Reminder"))
         
-        alert.addButton(withTitle: "Show Anyway")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: L10n.text("Show Anyway"))
+        alert.addButton(withTitle: L10n.text("Cancel"))
         
         let response = alert.runModal()
         

@@ -153,7 +153,7 @@ struct FloatingBreakContentView: View {
                         )
                 }
                 .buttonStyle(.plain)
-                .help("Close (or press ESC)")
+                .help(L10n.text("Close (or press ESC)"))
             }
             .padding(.horizontal, 20)
             .padding(.top, 16)
@@ -165,7 +165,7 @@ struct FloatingBreakContentView: View {
             // Main content with better spacing
             VStack(spacing: 20) {
                 VStack(spacing: 8) {
-                    Text("Take a Break")
+                    Text(L10n.text("Take a Break"))
                         .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
@@ -175,7 +175,7 @@ struct FloatingBreakContentView: View {
                             )
                         )
 
-                    Text("Look 20 feet away for 20 seconds")
+                    Text(L10n.text("Look 20 feet away for 20 seconds"))
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -215,7 +215,7 @@ struct FloatingBreakContentView: View {
                                 )
                             )
                             .contentTransition(.numericText())
-                        Text("seconds")
+                        Text(L10n.text("seconds"))
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.secondary)
                     }
@@ -226,7 +226,7 @@ struct FloatingBreakContentView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "forward.fill")
                             .font(.system(size: 11))
-                        Text("Skip Break")
+                        Text(L10n.text("Skip Break"))
                             .font(.system(size: 13, weight: .semibold))
                     }
                     .foregroundColor(.blue)
@@ -243,7 +243,7 @@ struct FloatingBreakContentView: View {
                     .shadow(color: .blue.opacity(0.15), radius: 4, x: 0, y: 2)
                 }
                 .buttonStyle(.plain)
-                .help("Skip this break")
+                .help(L10n.text("Skip this break"))
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)

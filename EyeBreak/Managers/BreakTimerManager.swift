@@ -375,14 +375,14 @@ class BreakTimerManager: ObservableObject {
     
     private func showOutsideWorkHoursAlert() {
         let alert = NSAlert()
-        alert.messageText = "Outside Work Hours"
-        alert.informativeText = "Your Smart Schedule is active and breaks are currently paused.\n\nWork Hours: \(settings.timeString(from: settings.workHoursStart)) - \(settings.timeString(from: settings.workHoursEnd))\n\nWould you like to take a break anyway or adjust your schedule?"
+        alert.messageText = L10n.text("Outside Work Hours")
+        alert.informativeText = L10n.format("Your Smart Schedule is active and breaks are currently paused.\n\nWork Hours: %@ - %@\n\nWould you like to take a break anyway or adjust your schedule?", settings.timeString(from: settings.workHoursStart), settings.timeString(from: settings.workHoursEnd))
         alert.alertStyle = .informational
-        alert.icon = NSImage(systemSymbolName: "clock.badge.exclamationmark", accessibilityDescription: "Schedule")
+        alert.icon = NSImage(systemSymbolName: "clock.badge.exclamationmark", accessibilityDescription: L10n.text("Schedule"))
         
-        alert.addButton(withTitle: "Take Break Anyway")
-        alert.addButton(withTitle: "Open Settings")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: L10n.text("Take Break Anyway"))
+        alert.addButton(withTitle: L10n.text("Open Settings"))
+        alert.addButton(withTitle: L10n.text("Cancel"))
         
         let response = alert.runModal()
         

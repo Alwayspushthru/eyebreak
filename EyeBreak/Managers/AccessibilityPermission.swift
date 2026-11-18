@@ -111,28 +111,28 @@ final class AccessibilityPermission: ObservableObject {
 
         let alert = NSAlert()
         alert.alertStyle = .informational
-        alert.messageText = "Keyboard shortcuts need permission"
+        alert.messageText = L10n.text("Keyboard shortcuts need permission")
 
         if afterUpdate {
-            alert.informativeText = """
+            alert.informativeText = L10n.text("""
             macOS reset EyeBreak's Accessibility permission when it updated, so the \
             keyboard shortcuts (⌘⇧B and the others) have stopped working.
 
             Re-enabling EyeBreak under Accessibility restores them. Everything else — \
             timers, break reminders and the menu bar — works normally either way.
-            """
+            """)
         } else {
-            alert.informativeText = """
+            alert.informativeText = L10n.text("""
             EyeBreak needs Accessibility permission to use its keyboard shortcuts \
             (⌘⇧B to take a break, ⌘⇧S to start, and the rest).
 
             Everything else — timers, break reminders and the menu bar — works \
             normally without it.
-            """
+            """)
         }
 
-        alert.addButton(withTitle: "Open Settings")
-        alert.addButton(withTitle: "Not Now")
+        alert.addButton(withTitle: L10n.text("Open Settings"))
+        alert.addButton(withTitle: L10n.text("Not Now"))
 
         if alert.runModal() == .alertFirstButtonReturn {
             openAccessibilitySettings()
@@ -143,9 +143,9 @@ final class AccessibilityPermission: ObservableObject {
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
         alert.alertStyle = .informational
-        alert.messageText = "Keyboard shortcuts are enabled"
-        alert.informativeText = "EyeBreak already has Accessibility permission."
-        alert.addButton(withTitle: "OK")
+        alert.messageText = L10n.text("Keyboard shortcuts are enabled")
+        alert.informativeText = L10n.text("EyeBreak already has Accessibility permission.")
+        alert.addButton(withTitle: L10n.text("OK"))
         alert.runModal()
     }
 

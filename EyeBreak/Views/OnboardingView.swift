@@ -37,7 +37,7 @@ struct OnboardingView: View {
             // Navigation
             HStack {
                 if currentPage > 0 {
-                    Button("Back") {
+                    Button(L10n.text("Back")) {
                         withAnimation {
                             currentPage -= 1
                         }
@@ -59,7 +59,7 @@ struct OnboardingView: View {
                 Spacer()
                 
                 if currentPage < totalPages - 1 {
-                    Button("Continue") {
+                    Button(L10n.text("Continue")) {
                         withAnimation {
                             currentPage += 1
                         }
@@ -67,7 +67,7 @@ struct OnboardingView: View {
                     .buttonStyle(.borderedProminent)
                     .keyboardShortcut(.defaultAction)
                 } else {
-                    Button("Get Started") {
+                    Button(L10n.text("Get Started")) {
                         completeOnboarding()
                     }
                     .buttonStyle(.borderedProminent)
@@ -141,7 +141,7 @@ struct WelcomePage: View {
             }
             
             VStack(spacing: 12) {
-                Text("Welcome to EyeBreak")
+                Text(L10n.text("Welcome to EyeBreak"))
                     .font(.system(size: 36, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -154,7 +154,7 @@ struct WelcomePage: View {
                 HStack(spacing: 6) {
                     Image(systemName: "sparkles")
                         .foregroundColor(.yellow)
-                    Text("Your eyes deserve a break")
+                    Text(L10n.text("Your eyes deserve a break"))
                         .font(.title3)
                         .foregroundColor(.secondary)
                     Image(systemName: "sparkles")
@@ -162,10 +162,10 @@ struct WelcomePage: View {
                 }
             }
             
-            Text("""
+            Text(L10n.text("""
             Spending hours in front of a screen can cause eye strain, headaches, \
             and fatigue. EyeBreak helps you take regular breaks to keep your eyes healthy.
-            """)
+            """))
             .font(.body)
             .foregroundColor(.secondary)
             .multilineTextAlignment(.center)
@@ -185,36 +185,36 @@ struct RulePage: View {
         VStack(spacing: 32) {
             Spacer()
             
-            Text("The 20-20-20 Rule")
+            Text(L10n.text("The 20-20-20 Rule"))
                 .font(.system(size: 36, weight: .bold, design: .rounded))
             
             VStack(spacing: 24) {
                 RuleCard(
                     number: "20",
-                    unit: "minutes",
-                    description: "Work for 20 minutes",
+                    unit: L10n.text("minutes"),
+                    description: L10n.text("Work for 20 minutes"),
                     icon: "desktopcomputer",
                     color: .blue
                 )
                 
                 RuleCard(
                     number: "20",
-                    unit: "feet",
-                    description: "Look 20 feet away",
+                    unit: L10n.text("feet"),
+                    description: L10n.text("Look 20 feet away"),
                     icon: "eye",
                     color: .green
                 )
                 
                 RuleCard(
                     number: "20",
-                    unit: "seconds",
-                    description: "Rest for 20 seconds",
+                    unit: L10n.text("seconds"),
+                    description: L10n.text("Rest for 20 seconds"),
                     icon: "timer",
                     color: .orange
                 )
             }
             
-            Text("This simple technique reduces eye strain and keeps you productive.")
+            Text(L10n.text("This simple technique reduces eye strain and keeps you productive."))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -318,38 +318,38 @@ struct FeaturesPage: View {
         VStack(spacing: 32) {
             Spacer()
             
-            Text("What EyeBreak Does")
+            Text(L10n.text("What EyeBreak Does"))
                 .font(.system(size: 36, weight: .bold, design: .rounded))
             
             VStack(alignment: .leading, spacing: 20) {
                 FeatureItem(
                     icon: "bell.badge.fill",
-                    title: "Gentle Reminders",
-                    description: "Get a notification 30 seconds before each break"
+                    title: L10n.text("Gentle Reminders"),
+                    description: L10n.text("Get a notification 30 seconds before each break")
                 )
                 
                 FeatureItem(
                     icon: "eye.slash.fill",
-                    title: "Screen Blur",
-                    description: "Your screen blurs during breaks to encourage rest"
+                    title: L10n.text("Screen Blur"),
+                    description: L10n.text("Your screen blurs during breaks to encourage rest")
                 )
                 
                 FeatureItem(
                     icon: "moon.zzz.fill",
-                    title: "Smart Pausing",
-                    description: "Automatically pauses when you're away from your Mac"
+                    title: L10n.text("Smart Pausing"),
+                    description: L10n.text("Automatically pauses when you're away from your Mac")
                 )
                 
                 FeatureItem(
                     icon: "chart.bar.fill",
-                    title: "Track Progress",
-                    description: "See how many breaks you've taken each day"
+                    title: L10n.text("Track Progress"),
+                    description: L10n.text("See how many breaks you've taken each day")
                 )
                 
                 FeatureItem(
                     icon: "lock.fill",
-                    title: "Privacy First",
-                    description: "All data stays on your Mac—no tracking or analytics"
+                    title: L10n.text("Privacy First"),
+                    description: L10n.text("All data stays on your Mac—no tracking or analytics")
                 )
             }
             .frame(width: 400)
@@ -423,10 +423,10 @@ struct PermissionsPage: View {
         VStack(spacing: 32) {
             Spacer()
             
-            Text("Permissions Needed")
+            Text(L10n.text("Permissions Needed"))
                 .font(.system(size: 36, weight: .bold, design: .rounded))
             
-            Text("EyeBreak needs a few permissions to work properly")
+            Text(L10n.text("EyeBreak needs a few permissions to work properly"))
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -434,8 +434,8 @@ struct PermissionsPage: View {
             VStack(spacing: 16) {
                 PermissionCard(
                     icon: "bell.badge.fill",
-                    title: "Notifications",
-                    description: "To remind you when it's time for a break",
+                    title: L10n.text("Notifications"),
+                    description: L10n.text("To remind you when it's time for a break"),
                     required: true,
                     granted: notificationGranted
                 ) {
@@ -444,8 +444,8 @@ struct PermissionsPage: View {
                 
                 PermissionCard(
                     icon: "eye.slash.fill",
-                    title: "Screen Recording",
-                    description: "To blur your screen during breaks",
+                    title: L10n.text("Screen Recording"),
+                    description: L10n.text("To blur your screen during breaks"),
                     required: false,
                     granted: screenRecordingGranted
                 ) {
@@ -454,7 +454,7 @@ struct PermissionsPage: View {
             }
             .frame(width: 450)
             
-            Text("You can change these permissions anytime in System Settings.")
+            Text(L10n.text("You can change these permissions anytime in System Settings."))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -537,7 +537,7 @@ struct PermissionCard: View {
                         .foregroundColor(.primary)
 
                     if required && !granted {
-                        Text("Required")
+                        Text(L10n.text("Required"))
                             .font(.system(size: 11, weight: .semibold))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
@@ -575,7 +575,7 @@ struct PermissionCard: View {
                 .transition(.scale.combined(with: .opacity))
             } else {
                 Button(action: action) {
-                    Text("Grant")
+                    Text(L10n.text("Grant"))
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)

@@ -27,6 +27,18 @@ class StatusBarController: NSObject, ObservableObject {
 
         // Subscribe to timer state changes to update menu bar text
         setupTimerObserver()
+        AppLocalization.shared.$language
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.updateStatusMenu()
+                self.updateMenuBarText(for: self.timerManager.state)
+                for window in NSApp.windows where window.identifier?.rawValue == SettingsWindowHost.windowID {
+                    window.title = L10n.text("EyeBreak Settings")
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Timer Observer
@@ -114,15 +126,15 @@ class StatusBarController: NSObject, ObservableObject {
     private func tooltipText(for state: TimerState) -> String {
         switch state {
         case .idle:
-            return "EyeBreak - Click to start"
+            return L10n.text("EyeBreak - Click to start")
         case .working(let seconds):
-            return "Working - Break in \(formatTimeCompact(seconds))"
+            return L10n.format("Working - Break in %@", formatTimeCompact(seconds))
         case .preBreak(let seconds):
-            return "Break starting in \(seconds) seconds"
+            return L10n.format("Break starting in %@ seconds", seconds)
         case .breaking(let seconds):
-            return "On break - \(seconds) seconds remaining"
+            return L10n.format("On break - %@ seconds remaining", seconds)
         case .paused:
-            return "Timer paused"
+            return L10n.text("Timer paused")
         }
     }
     
@@ -152,7 +164,7 @@ class StatusBarController: NSObject, ObservableObject {
             button.imagePosition = .imageOnly
         }
         
-        button.toolTip = "EyeBreak - Eye Care Reminders"
+        button.toolTip = L10n.text("EyeBreak - Eye Care Reminders")
         button.appearsDisabled = false
         
         // Force button to be visible
@@ -165,29 +177,33 @@ class StatusBarController: NSObject, ObservableObject {
         item.autosaveName = "EyeBreakStatusItem" // Persist across launches
         
         
-        // Create menu
+        updateStatusMenu()
+    }
+
+    private func updateStatusMenu() {
+        guard let item = statusItem else { return }
         let menu = NSMenu()
         menu.autoenablesItems = true
         
         // Settings
-        let settingsItem = NSMenuItem(title: "Open Settings...", action: #selector(openSettings), keyEquivalent: ",")
+        let settingsItem = NSMenuItem(title: L10n.text("Open Settings..."), action: #selector(openSettings), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
         
         menu.addItem(NSMenuItem.separator())
         
         // Timer controls
-        let startItem = NSMenuItem(title: "Start Timer", action: #selector(startTimer), keyEquivalent: "s")
+        let startItem = NSMenuItem(title: L10n.text("Start Timer"), action: #selector(startTimer), keyEquivalent: "s")
         startItem.keyEquivalentModifierMask = [.command, .shift]
         startItem.target = self
         menu.addItem(startItem)
         
-        let breakItem = NSMenuItem(title: "Take Break Now", action: #selector(takeBreak), keyEquivalent: "b")
+        let breakItem = NSMenuItem(title: L10n.text("Take Break Now"), action: #selector(takeBreak), keyEquivalent: "b")
         breakItem.keyEquivalentModifierMask = [.command, .shift]
         breakItem.target = self
         menu.addItem(breakItem)
         
-        let stopItem = NSMenuItem(title: "Stop Timer", action: #selector(stopTimer), keyEquivalent: "x")
+        let stopItem = NSMenuItem(title: L10n.text("Stop Timer"), action: #selector(stopTimer), keyEquivalent: "x")
         stopItem.keyEquivalentModifierMask = [.command, .shift]
         stopItem.target = self
         menu.addItem(stopItem)
@@ -195,7 +211,7 @@ class StatusBarController: NSObject, ObservableObject {
         menu.addItem(NSMenuItem.separator())
         
         // Reminder
-        let reminderItem = NSMenuItem(title: "Show Reminder", action: #selector(showReminder), keyEquivalent: "r")
+        let reminderItem = NSMenuItem(title: L10n.text("Show Reminder"), action: #selector(showReminder), keyEquivalent: "r")
         reminderItem.keyEquivalentModifierMask = [.command, .shift]
         reminderItem.target = self
         menu.addItem(reminderItem)
@@ -203,13 +219,13 @@ class StatusBarController: NSObject, ObservableObject {
         menu.addItem(NSMenuItem.separator())
 
         // Water Reminder
-        let waterReminderItem = NSMenuItem(title: "Show Water Reminder", action: #selector(showWaterReminder), keyEquivalent: "w")
+        let waterReminderItem = NSMenuItem(title: L10n.text("Show Water Reminder"), action: #selector(showWaterReminder), keyEquivalent: "w")
         waterReminderItem.keyEquivalentModifierMask = [.command, .shift]
         waterReminderItem.target = self
         menu.addItem(waterReminderItem)
 
         // Quit
-        let quitItem = NSMenuItem(title: "Quit EyeBreak", action: #selector(quit), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: L10n.text("Quit EyeBreak"), action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
         
@@ -223,7 +239,7 @@ class StatusBarController: NSObject, ObservableObject {
         // Check if settings window already exists
         var settingsWindowExists = false
         for window in NSApp.windows {
-            if window.title == "EyeBreak Settings" {
+            if window.identifier?.rawValue == SettingsWindowHost.windowID {
                 // Window exists, just bring it to front
                 window.makeKeyAndOrderFront(nil)
                 NSApp.activate(ignoringOtherApps: true)
@@ -239,13 +255,10 @@ class StatusBarController: NSObject, ObservableObject {
             NSApp.activate(ignoringOtherApps: true)
             
             // Create the settings window through SwiftUI Window scene
-            let settingsView = SettingsView()
-                .environmentObject(BreakTimerManager.shared)
-                .environmentObject(AppSettings.shared)
-            
-            let hostingController = NSHostingController(rootView: settingsView)
+            let hostingController = NSHostingController(rootView: SettingsWindowHost())
             let window = NSWindow(contentViewController: hostingController)
-            window.title = "EyeBreak Settings"
+            window.identifier = NSUserInterfaceItemIdentifier(SettingsWindowHost.windowID)
+            window.title = L10n.text("EyeBreak Settings")
             window.setContentSize(NSSize(width: 700, height: 600))
             window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
             window.center()

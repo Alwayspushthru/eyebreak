@@ -14,6 +14,8 @@
 		A10000001 /* EyeBreakApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000 /* EyeBreakApp.swift */; };
 		A10000003 /* TimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000002 /* TimerState.swift */; };
 		A10000005 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000004 /* Settings.swift */; };
+		A100000C1 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000C0 /* AppLanguage.swift */; };
+		A100000C4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A100000C3 /* Localizable.strings */; };
 		A10000007 /* BreakTimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000006 /* BreakTimerManager.swift */; };
 		A10000009 /* IdleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000008 /* IdleDetector.swift */; };
 		A1000000B /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000A /* NotificationManager.swift */; };
@@ -42,6 +44,8 @@
 		A10000000 /* EyeBreakApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyeBreakApp.swift; sourceTree = "<group>"; };
 		A10000002 /* TimerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerState.swift; sourceTree = "<group>"; };
 		A10000004 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		A100000C0 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
+		A100000C2 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "Resources/zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		A10000006 /* BreakTimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakTimerManager.swift; sourceTree = "<group>"; };
 		A10000008 /* IdleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDetector.swift; sourceTree = "<group>"; };
 		A1000000A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -81,6 +85,7 @@
 			children = (
 				A10000002 /* TimerState.swift */,
 				A10000004 /* Settings.swift */,
+				A100000C0 /* AppLanguage.swift */,
 				A10000021 /* ColorTheme.swift */,
 			);
 			path = Models;
@@ -123,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				A10000018 /* Assets.xcassets */,
+				A100000C3 /* Localizable.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -202,6 +208,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = A1FFFFEE1;
 			productRefGroup = A1FFFFFF0 /* Products */;
@@ -222,6 +229,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000019 /* Assets.xcassets in Resources */,
+				A100000C4 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +243,7 @@
 				A10000001 /* EyeBreakApp.swift in Sources */,
 				A10000003 /* TimerState.swift in Sources */,
 				A10000005 /* Settings.swift in Sources */,
+				A100000C1 /* AppLanguage.swift in Sources */,
 				A10000023 /* ColorTheme.swift in Sources */,
 				99BD678B2E92516200D6FF8C /* StatusBarController.swift in Sources */,
 				99EB42272EACA748003A7CDA /* LaunchAtLoginManager.swift in Sources */,
@@ -548,6 +557,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin PBXVariantGroup section */
+		A100000C3 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A100000C2 /* zh-Hans */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		A10000080 /* XCRemoteSwiftPackageReference "Sparkle" */ = {

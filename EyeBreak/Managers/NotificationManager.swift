@@ -46,8 +46,8 @@ class NotificationManager: NSObject {
     
     func sendPreBreakNotification(seconds: Int) {
         let content = UNMutableNotificationContent()
-        content.title = "Break Time Soon"
-        content.body = "Wrap up your work—break starting in \(seconds) seconds! 🌟"
+        content.title = L10n.text("Break Time Soon")
+        content.body = L10n.format("Wrap up your work—break starting in %@ seconds! 🌟", seconds)
         content.sound = .default
         
         let request = UNNotificationRequest(
@@ -64,8 +64,8 @@ class NotificationManager: NSObject {
     
     func sendBreakStartNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Time for a Break!"
-        content.body = "Look away! Stare at something 20 feet away for 20 seconds. Your eyes will thank you. 👁️"
+        content.title = L10n.text("Time for a Break!")
+        content.body = L10n.text("Look away! Stare at something 20 feet away for 20 seconds. Your eyes will thank you. 👁️")
         content.sound = .default
         
         let request = UNNotificationRequest(
@@ -82,8 +82,8 @@ class NotificationManager: NSObject {
     
     func sendBreakCompleteNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Great Job!"
-        content.body = "Break complete! Back to work. 💪"
+        content.title = L10n.text("Great Job!")
+        content.body = L10n.text("Break complete! Back to work. 💪")
         content.sound = .default
         
         let request = UNNotificationRequest(
@@ -100,8 +100,8 @@ class NotificationManager: NSObject {
     
     func sendIdlePausedNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Timer Paused"
-        content.body = "You seem to be away. Timer paused—come back when you're ready! 😴"
+        content.title = L10n.text("Timer Paused")
+        content.body = L10n.text("You seem to be away. Timer paused—come back when you're ready! 😴")
         content.sound = nil
         
         let request = UNNotificationRequest(
